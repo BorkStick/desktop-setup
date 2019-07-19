@@ -6,12 +6,24 @@
 # dconf-cli software-properties-common openssh-server atom ranger obs-studio google-chrome-stable enpass vlc virtualbox gnome-tweaks vagrant 
 # libcanberra-gtk0 libcanberra-gtk-module libgnome-keyring-common libgnome-keyring-dev
 
-MinAppList="vim git build-essential software-properties-common openssh-server exfat-fuse exfat-utils htop "
-BasicAppList="$MinAppList cmatrix ffmpeg tmux copyq shutter libcanberra-gtk0 libcanberra-gtk-module rofi code google-chrome-stable filezilla ranger gnome-tweaks vlc"
+MinAppList="vim git curl unzip build-essential software-properties-common apt-transport-https wget openssh-server exfat-fuse exfat-utils htop"
+BasicAppList="$MinAppList cmatrix ffmpeg tmux copyq shutter rofi filezilla ranger vlc"
 FullAppList="$BasicAppList hexchat gparted virtualbox vagrant ansible nodejs npm" 
 ManualAppList=""
 
 # Functions
+
+
+
+# min
+#
+# vim tmux htop git
+min() {
+    #clear
+    start
+    sudo apt install -y $MinAppList
+    
+}
 
 # basic
 # 
@@ -21,21 +33,9 @@ basic() {
     start
     sudo apt install -y $BasicAppList
     #dotfiles
-    
+    vscodeInstall
+    copyqInstall
 }
-
-
-# min
-#
-# vim tmux htop git
-min() {
-    #clear
-    start
-    dotfiles
-    #sudo apt install -y $MinAppList
-    
-}
-
 
 # full
 #
@@ -44,9 +44,11 @@ full(){
     clear
     start
     sudo apt install -y $FullAppList
-    dotfiles
+    #dotfiles
     draculaTheme
     ytdlInstall
+    vscodeInstall
+    copyqInstall
     vscodePlugins
 }
 
@@ -137,6 +139,59 @@ sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/you
 sudo chmod a+rx /usr/local/bin/youtube-dl
 }
 
+# vscode install
+vscodeInstall() {
+echo ""
+echo "===================="
+echo " Install VS Code "
+echo "===================="    
+echo ""
+echo ""
+wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+sudo apt update -y
+sudo apt install -y code
+}
+
+# copyq install
+copyqInstall() {
+echo ""
+echo "===================="
+echo " Install CopyQ "
+echo "===================="    
+echo ""
+echo ""
+sudo add-apt-repository ppa:hluk/copyq
+sudo apt update -y
+sudo apt install -y copyq
+}
+
+# this will grab all my essential files that i use daily scripts / notes / projects
+#
+upAndRunning() {
+echo ""
+echo "===================="
+echo " Doing the needful "
+echo "===================="    
+echo ""
+echo ""
+GITPASS=$1
+if [ -z $1 ]
+then
+echo ""
+printf "Enter the gitlab Password:\n"
+read -s GITPASS
+fi
+cd ~/
+git clone https://BorkStick:$GITPASS@lab.borkslash.com/borkstick/scripts.git
+cd ~/Documents
+git clone https://BorkStick:$GITPASS@lab.borkslash.com/borkstick/borknotes.git
+mkdir ~/PROJECTS
+cd ~/PROJECTS
+git clone https://BorkStick:$GITPASS@lab.borkslash.com/borkstick/server-stuff.git
+git clone https://BorkStick:$GITPASS@lab.borkslash.com/borkstick/anisble-playborks.git
+}
+
 
 #dracula theme for gnome terminal
 draculaTheme() {
@@ -191,12 +246,14 @@ do
         "Min")
             echo "you chose $opt"
             min
+            upAndRunning
             jobDone
             break
             ;;
         "Full")
             echo "you chose choice $REPLY which is $opt"
             full
+            upAndRunning
             jobDone
             break
             ;;
