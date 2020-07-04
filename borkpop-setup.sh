@@ -7,8 +7,9 @@
 # libcanberra-gtk0 libcanberra-gtk-module libgnome-keyring-common libgnome-keyring-dev
 
 MinAppList="vim git curl unzip build-essential software-properties-common apt-transport-https wget openssh-server exfat-fuse exfat-utils htop"
-BasicAppList="$MinAppList cmatrix ffmpeg tmux copyq shutter rofi filezilla ranger vlc"
-FullAppList="$BasicAppList hexchat gparted virtualbox vagrant ansible nodejs npm" 
+BasicAppList="$MinAppList cmatrix alacritty ffmpeg tmux copyq shutter rofi filezilla ranger vlc"
+DevAppList="nodejs npm python"
+FullAppList="$BasicAppList hexchat gparted ansible" 
 ManualAppList=""
 
 # Functions
@@ -19,7 +20,7 @@ ManualAppList=""
 #
 # vim tmux htop git
 min() {
-    #clear
+    clear
     start
     sudo apt install -y $MinAppList
     
@@ -29,10 +30,10 @@ min() {
 # 
 #
 basic() {
-    #clear
+    clear
     start
     sudo apt install -y $BasicAppList
-    #dotfiles
+    dotfiles
     vscodeInstall
     copyqInstall
 }
@@ -43,13 +44,15 @@ basic() {
 full(){
     clear
     start
+    sudo apt install -y $DevAppList
     sudo apt install -y $FullAppList
-    #dotfiles
+    dotfiles
     draculaTheme
     ytdlInstall
     vscodeInstall
     copyqInstall
     vscodePlugins
+    zshInstall
 }
 
 
@@ -71,26 +74,31 @@ echo " ADDING SOME SWEET VSCODE PLUGINS "
 echo "=================================="
 echo ""
 echo ""
-code --install-extension abusaidm.html-snippets
-code --install-extension CoenraadS.bracket-pair-colorizer
-code --install-extension DavidAnson.vscode-markdownlint
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension ecmel.vscode-html-css
-code --install-extension formulahendry.auto-close-tag
-code --install-extension formulahendry.auto-complete-tag
-code --install-extension formulahendry.auto-rename-tag
-code --install-extension HookyQR.beautify
-code --install-extension ionutvmi.path-autocomplete
-code --install-extension ms-vsliveshare.vsliveshare
-code --install-extension octref.vetur
-code --install-extension PKief.material-icon-theme
-code --install-extension ritwickdey.LiveServer
-code --install-extension streetsidesoftware.code-spell-checker
-code --install-extension wayou.vscode-todo-highlight
-code --install-extension yzhang.markdown-all-in-one
+
+ext install Shan.code-settings-sync
+ext install esbenp.prettier-vscode
+ext install ritwickdey.LiveServer
+ext install eamodio.gitlens
+ext install vscode-icons-team.vscode-icons
+ext install abusaidm.html-snippets
+ext install xabikos.JavaScriptSnippets
+ext install ecmel.vscode-html-css
+ext install CoenraadS.bracket-pair-colorizer-2
+ext install formulahendry.auto-rename-tag
+ext install formulahendry.auto-close-tag
+ext install DavidAnson.vscode-markdownlint
+ext install yzhang.markdown-all-in-one
+ext install streetsidesoftware.code-spell-checker
+ext install wayou.vscode-todo-highlight
+ext install shd101wyy.markdown-preview-enhanced
+ext install oderwat.indent-rainbow
+ext install Gruntfuggly.todo-tree
+
+
+
 
 # theme
-code --install-extension dracula-theme.theme-dracula
+ext install dracula-theme.theme-dracula
 }
 
 start () {
@@ -117,7 +125,7 @@ echo ""
 
 # I should be able to set this shit up so it pulls my dotfiles from github/gitlab
 # TODO: do get the dotfiles repo setup and working
-git clone http://lab.borkslash.com/BorkStick/dotfiles.git ~/dotfiles
+git clone http://lab.borkslash.com/BorkStick/dotfiles-2019.git ~/dotfiles
 
 # need to symlink them
 sh ~/dotfiles/bootstrap.sh
@@ -164,6 +172,17 @@ echo ""
 sudo add-apt-repository ppa:hluk/copyq
 sudo apt update -y
 sudo apt install -y copyq
+}
+
+zshInstall() {
+echo ""
+echo "===================="
+echo " Install ZSH and Oh My ZSH "
+echo "===================="    
+echo ""
+echo ""
+sudo apt install zsh
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
 # this will grab all my essential files that i use daily scripts / notes / projects
